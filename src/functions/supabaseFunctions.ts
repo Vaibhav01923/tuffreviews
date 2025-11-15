@@ -4,7 +4,13 @@ import { getRange } from "@/utils/paginate";
 
 type Album = Tables<"albums">;
 
-export async function getAlbums({ pageParam }: { pageParam: number }): Promise<{
+export async function getAlbums({
+  pageParam,
+  search,
+}: {
+  pageParam: number;
+  search: string;
+}): Promise<{
   data: Album[];
   currentPage: number;
   nextPage: number | null;
@@ -12,10 +18,12 @@ export async function getAlbums({ pageParam }: { pageParam: number }): Promise<{
   const LIMIT = 50;
   const [from, to] = getRange(pageParam, LIMIT);
 
-  const { data, error, count } = await supabase
-    .from("albums")
-    .select("*", { count: "exact" })
-    .range(from, to);
+  let query = supabase.from("albums").select("*", { count: "exact" });
+  if (search && search.trim() !== "") {
+    query = query.ilike("search_text", `%${search}%`);
+  }
+
+  const { data, error, count } = await query.range(from, to);
 
   if (error || !data) {
     console.error("Error fetching albums:", error);

@@ -1,11 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { getAlbums } from "@/functions/supabaseFunctions";
 import { LoadMoreTrigger } from "@/components/LoadMoreTrigger";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QUERY_CONFIG, STATS_DATA } from "@/constants";
 import { AlbumCard } from "@/components/album";
@@ -14,17 +13,24 @@ import LoadingSkeleton from "@/components/LoadingSkeleton";
 import StatsItem from "@/components/StatsItem";
 import { ClickSpark } from "@/components/ui/click-spark";
 import type { Album } from "@/types";
+import { useDebounce } from "@/hooks/useDebounce";
 
 // Main application component
 function Home() {
   // State for the background GIF URL
   const [gifUrl, setGifUrl] = useState("/hero.gif");
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 300);
+
+  // Ref to preserve scroll position during state changes
+  const scrollPositionRef = useRef<number>(0);
 
   // Fetch albums data with infinite scroll
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["albums"],
-      queryFn: ({ pageParam }) => getAlbums({ pageParam }),
+      queryKey: ["albums", debouncedQuery],
+      queryFn: ({ pageParam }) =>
+        getAlbums({ pageParam: pageParam, search: debouncedQuery }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => lastPage.nextPage,
       staleTime: QUERY_CONFIG.STALE_TIME,
@@ -48,18 +54,25 @@ function Home() {
     }
   }, [fetchNextPage, isFetchingNextPage]);
 
-  // Show loading skeleton while initial data is loading
-  if (isLoading) {
-    return <LoadingSkeleton />;
-  }
+  // Preserve scroll position during loading state changes
+  useEffect(() => {
+    if (isLoading) {
+      scrollPositionRef.current = window.scrollY;
+    } else {
+      // Only restore if we had a previous scroll position
+      if (scrollPositionRef.current > 0) {
+        window.scrollTo(0, scrollPositionRef.current);
+      }
+    }
+  }, [isLoading]);
 
   return (
     <div className="min-h-screen bg-background relative">
       <ClickSpark sparkColor="#fbbf24" />
-      
+
       {/* Hero Section with animated GIF background */}
       <section
-        className="relative py-20 overflow-hidden"
+        className="relative py-20 overflow-hidden z-20"
         aria-label="Hero section"
       >
         <div className="absolute inset-0" aria-hidden="true">
@@ -70,7 +83,7 @@ function Home() {
             loading="eager"
             fetchPriority="high"
             key={gifUrl}
-            style={{ objectPosition: 'center 65%' }}
+            style={{ objectPosition: "center 65%" }}
           />
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
@@ -101,33 +114,22 @@ function Home() {
       </section>
 
       {/* Search Bar Section */}
-      <section className="bg-card/50 backdrop-blur-sm border-b border-border">
+      <section className="bg-card/50 backdrop-blur-sm border-b border-border relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="max-w-2xl mx-auto">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="h-6 w-6 text-gray-500" />
+                <Search className="h-6 w-6 dark:text-white text-black" />
               </div>
               <Input
                 type="text"
                 placeholder="Search for albums, artists, or genres..."
-                className="pl-12 pr-32 py-4 text-lg bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-xl placeholder:text-gray-600 focus:ring-4 focus:ring-white/20 text-gray-900"
-                disabled
+                className="pl-12 pr-32 py-4 text-lg dark:text-white bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-xl placeholder:text-gray-600 focus:ring-4 focus:ring-white/20 text-gray-900"
                 aria-label="Search"
+                onChange={(e) => setQuery(e.target.value)}
+                value={query}
               />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <Button
-                  size="lg"
-                  className="rounded-lg px-6 py-2 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
-                  disabled
-                >
-                  Search
-                </Button>
-              </div>
             </div>
-            <p className="text-center text-muted-foreground text-sm mt-3">
-              🔍 Search functionality coming soon!
-            </p>
           </div>
         </div>
       </section>
@@ -136,11 +138,15 @@ function Home() {
       <Navbar />
 
       {/* Album Grid Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {albums.map((album: Album) => (
-            <AlbumCard key={album.id} album={album} />
-          ))}
+          {isLoading ? (
+            <LoadingSkeleton count={10} />
+          ) : (
+            albums.map((album: Album) => (
+              <AlbumCard key={album.id} album={album} />
+            ))
+          )}
         </div>
 
         {/* Load More Trigger */}

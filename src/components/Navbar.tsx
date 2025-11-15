@@ -5,7 +5,7 @@ import { Home, TrendingUp, Quote, User } from "lucide-react";
 // Navigation bar component
 function Navbar() {
   return (
-    <nav className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-10">
+    <nav className="bg-card/90 backdrop-blur-sm border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -14,7 +14,7 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary"
+                className="gap-2 text-foreground hover:text-primary cursor-pointer"
                 disabled
               >
                 <Home className="h-4 w-4" />
@@ -23,7 +23,7 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary"
+                className="gap-2 text-foreground hover:text-primary cursor-pointer"
                 disabled
               >
                 <TrendingUp className="h-4 w-4" />
@@ -32,7 +32,7 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary"
+                className="gap-2 text-foreground hover:text-primary cursor-pointer"
                 disabled
               >
                 <Quote className="h-4 w-4" />
@@ -41,7 +41,7 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary"
+                className="gap-2 text-foreground hover:text-primary cursor-pointer"
                 disabled
               >
                 <User className="h-4 w-4" />
