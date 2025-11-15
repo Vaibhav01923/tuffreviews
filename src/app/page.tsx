@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QUERY_CONFIG, STATS_DATA } from "@/constants";
 import { AlbumCard } from "@/components/album";
-import FilterBadges from "@/components/FilterBadges";
+import Navbar from "@/components/Navbar";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import StatsItem from "@/components/StatsItem";
+import { ClickSpark } from "@/components/ui/click-spark";
 import type { Album } from "@/types";
 
 // Main application component
@@ -53,7 +54,8 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <ClickSpark sparkColor="#fbbf24" />
       
       {/* Hero Section with animated GIF background */}
       <section
@@ -130,8 +132,8 @@ function Home() {
         </div>
       </section>
 
-      {/* Filter Badges Section */}
-      <FilterBadges />
+      {/* Navigation Bar */}
+      <Navbar />
 
       {/* Album Grid Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
