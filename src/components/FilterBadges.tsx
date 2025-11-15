@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { FILTER_GENRES } from "@/constants";
 
 // Component to display filter genre badges (currently disabled)
@@ -22,9 +23,12 @@ function FilterBadges() {
               ))}
             </div>
           </div>
-          <Button variant="ghost" size="sm" disabled>
-            Clear filters
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="ghost" size="sm" disabled>
+              Clear filters
+            </Button>
+          </div>
         </div>
       </div>
     </div>

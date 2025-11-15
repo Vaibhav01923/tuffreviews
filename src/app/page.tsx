@@ -7,7 +7,6 @@ import { getAlbums } from "@/functions/supabaseFunctions";
 import { LoadMoreTrigger } from "@/components/LoadMoreTrigger";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { QUERY_CONFIG, STATS_DATA } from "@/constants";
 import { AlbumCard } from "@/components/album";
 import FilterBadges from "@/components/FilterBadges";
@@ -21,33 +20,23 @@ function Home() {
   const [gifUrl, setGifUrl] = useState("/hero.gif");
 
   // Fetch albums data with infinite scroll
-  const {
-    data,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["albums"],
-    queryFn: ({ pageParam }) => getAlbums({ pageParam }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    staleTime: QUERY_CONFIG.STALE_TIME, // Cache for 5 minutes
-  });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["albums"],
+      queryFn: ({ pageParam }) => getAlbums({ pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+      staleTime: QUERY_CONFIG.STALE_TIME,
+    });
 
   // Combine all pages of albums into one array
-  const albums = useMemo(() =>
-    data?.pages.flatMap((page) => page.data) ?? [],
+  const albums = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
     [data?.pages]
   );
 
   // Set up GIF URL with cache-busting timestamp
   useEffect(() => {
-    setGifUrl(`/hero.gif?t=${performance.now()}`);
-  }, []);
-
-  // Function to reload the GIF
-  const reloadGif = useCallback(() => {
     setGifUrl(`/hero.gif?t=${performance.now()}`);
   }, []);
 
@@ -65,35 +54,12 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header Section */}
-      <header className="bg-card border-b border-border shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Music Albums</h1>
-              <p className="mt-2 text-muted-foreground">
-                Discover and review amazing music albums
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={reloadGif}
-                className="hidden lg:flex"
-                aria-label="Reload background"
-              >
-                🔄 Reload BG
-              </Button>
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section - Text only with GIF background */}
-      <section className="relative py-20 overflow-hidden" aria-label="Hero section">
-        {/* Animated GIF Background */}
+      
+      {/* Hero Section with animated GIF background */}
+      <section
+        className="relative py-20 overflow-hidden"
+        aria-label="Hero section"
+      >
         <div className="absolute inset-0" aria-hidden="true">
           <img
             src={gifUrl}
@@ -101,11 +67,8 @@ function Home() {
             className="w-full h-full object-cover"
             loading="eager"
             fetchPriority="high"
-            style={{
-              imageRendering: 'auto',
-              animationDuration: '1.2s'
-            }}
             key={gifUrl}
+            style={{ objectPosition: 'center 65%' }}
           />
           <div className="absolute inset-0 bg-black/60"></div>
         </div>
@@ -113,16 +76,22 @@ function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-5xl font-bold text-white mb-6">
-              Find Your Next Favorite Album
+              {"Made By a HipHop Head with Passion ❤️ "}
             </h2>
             <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Explore thousands of albums, read reviews, and discover new music from artists around the world
+              Fuck Bitchfork or Any other so called critique who ragebaits us,
+              Only place on the Internet with structured authentic reviews of
+              your favoruite albums
             </p>
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {STATS_DATA.map((stat) => (
-                <StatsItem key={stat.label} value={stat.value} label={stat.label} />
+                <StatsItem
+                  key={stat.label}
+                  value={stat.value}
+                  label={stat.label}
+                />
               ))}
             </div>
           </div>
@@ -181,7 +150,11 @@ function Home() {
 
         {/* Loading More Indicator */}
         {isFetchingNextPage && (
-          <div className="mt-8 flex justify-center" role="status" aria-live="polite">
+          <div
+            className="mt-8 flex justify-center"
+            role="status"
+            aria-live="polite"
+          >
             <div className="flex items-center gap-3 text-muted-foreground bg-card px-6 py-3 rounded-full shadow-lg border border-border">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
               <span className="font-medium">Loading more albums...</span>

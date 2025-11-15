@@ -34,7 +34,7 @@ function AlbumCard({ album }: AlbumCardProps) {
             <img
               src={album.cover_url}
               alt={`${album.title} cover`}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover"
               onError={handleImageError}
               loading="lazy"
               style={{ objectFit: 'cover', objectPosition: 'center' }}
