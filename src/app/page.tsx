@@ -12,8 +12,11 @@ import Navbar from "@/components/Navbar";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
 import StatsItem from "@/components/StatsItem";
 import { ClickSpark } from "@/components/ui/click-spark";
+import TextType from "@/components/ui/text-type";
 import type { Album } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 // Main application component
 function Home() {
@@ -68,7 +71,9 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <ClickSpark sparkColor="#fbbf24" />
+      <div style={{ zIndex: 5 }}>
+        <ClickSpark sparkColor="#fbbf24" />
+      </div>
 
       {/* Hero Section with animated GIF background */}
       <section
@@ -91,23 +96,38 @@ function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-5xl font-bold text-white mb-6">
-              {"Made By a HipHop Head with Passion ❤️ "}
+              Made By a HipHop Head
+              <TextType
+                text={["with Love ❤️", "with passion", "for the culture"]}
+                typingSpeed={80}
+                deletingSpeed={40}
+                pauseDuration={1500}
+                loop={true}
+                showCursor={true}
+                cursorCharacter="|"
+                className={"ml-2 text-red-500"}
+                cursorClassName="text-white"
+                textColors={["#ff1a1a", "#ffeb3b", "#ff9800"]}
+              />
             </h2>
-            <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Fuck Bitchfork or Any other so called critique who ragebaits us,
-              Only place on the Internet with structured authentic reviews of
-              your favoruite albums
-            </p>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {STATS_DATA.map((stat) => (
-                <StatsItem
-                  key={stat.label}
-                  value={stat.value}
-                  label={stat.label}
-                />
-              ))}
+            <div className="font-bold text-[17px] text-white/60 ">
+              <span className="text-red-500/80 drop-shadow-xl underline">
+                Fuck Bitchfork
+              </span>
+              , We dont rely on ragebiat for views
+              <div>
+                <span className="underline">ONLY</span> PLACE ON THE INTERNET
+                FOR AUTHENTIC AND REAL REVIEWS
+              </div>
+              <div>
+                This is where Real Art gets Recognition,{" "}
+                <span className="underline">
+                  <span className="font-extrabold">Click</span> on an album to
+                  start giving reviews
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -144,7 +164,13 @@ function Home() {
             <LoadingSkeleton count={10} />
           ) : (
             albums.map((album: Album) => (
-              <AlbumCard key={album.id} album={album} />
+              <Link
+                key={album.id}
+                href={`/albums/${album.id}`}
+                className="block"
+              >
+                <AlbumCard album={album} />
+              </Link>
             ))
           )}
         </div>

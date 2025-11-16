@@ -1,7 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { Home, TrendingUp, Quote, User } from "lucide-react";
-
+import {
+  Home,
+  TrendingUp,
+  Quote,
+  User,
+  Music2Icon,
+  LogIn,
+  LogOut,
+} from "lucide-react";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+  UserButton,
+} from "@clerk/nextjs";
 // Navigation bar component
 function Navbar() {
   return (
@@ -14,8 +28,9 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary cursor-pointer"
-                disabled
+                className="gap-2 text-foreground hover:text-primary cursor-pointer opacity-50"
+                onClick={(e) => e.preventDefault()}
+                style={{ cursor: "pointer" }}
               >
                 <Home className="h-4 w-4" />
                 Home
@@ -23,8 +38,9 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary cursor-pointer"
-                disabled
+                className="gap-2 text-foreground hover:text-primary cursor-pointer opacity-50"
+                onClick={(e) => e.preventDefault()}
+                style={{ cursor: "pointer" }}
               >
                 <TrendingUp className="h-4 w-4" />
                 Hot Artists
@@ -32,8 +48,9 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary cursor-pointer"
-                disabled
+                className="gap-2 text-foreground hover:text-primary cursor-pointer opacity-50"
+                onClick={(e) => e.preventDefault()}
+                style={{ cursor: "pointer" }}
               >
                 <Quote className="h-4 w-4" />
                 Best Verses
@@ -41,15 +58,38 @@ function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 text-foreground hover:text-primary cursor-pointer"
-                disabled
+                className="gap-2 text-foreground hover:text-primary cursor-pointer opacity-50"
+                onClick={(e) => e.preventDefault()}
+                style={{ cursor: "pointer" }}
+              >
+                <Music2Icon className="h-4 w-4" />
+                Upcoming Artists
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 text-foreground hover:text-primary cursor-pointer opacity-50"
+                onClick={(e) => e.preventDefault()}
+                style={{ cursor: "pointer" }}
               >
                 <User className="h-4 w-4" />
                 About Me
               </Button>
             </div>
           </div>
-          <ThemeToggle />
+          <div>
+            <ThemeToggle />
+            <SignedOut>
+              <SignInButton>
+                <Button variant={"ghost"}>
+                  <LogIn />
+                </Button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
         </div>
       </div>
     </nav>
